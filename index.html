@@ -1,0 +1,1526 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Automatic Signalling System - Forms (4 Pages)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0b2545;
+    --navy2:#123568;
+    --gold:#c9a227;
+    --gold-light:#f4e6b8;
+    --paper:#ffffff;
+    --line:#0b2545;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:"Nirmala UI","Noto Sans Devanagari","Mangal",Arial,sans-serif;
+    background:#e8ecf3;
+    margin:0;
+    padding:20px;
+    color:#111;
+  }
+  .toolbar{
+    max-width:900px;
+    margin:0 auto 16px auto;
+    background:var(--navy);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+  }
+  .toolbar h1{
+    font-size:15px;
+    margin:0;
+    font-weight:600;
+    letter-spacing:.3px;
+  }
+  .toolbar .btns{display:flex;gap:8px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+  }
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{background:#e0b833;}
+  .btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);}
+  .btn-outline:hover{background:rgba(255,255,255,.12);}
+  .btn-small{padding:5px 10px;font-size:12px;}
+  .status{
+    max-width:900px;margin:0 auto 12px auto;font-size:12px;color:var(--navy2);text-align:right;
+  }
+
+  .page{
+    max-width:900px;
+    margin:0 auto 26px auto;
+    background:var(--paper);
+    border:2px solid var(--navy);
+    border-radius:6px;
+    padding:26px 30px 22px 30px;
+    position:relative;
+    box-shadow:0 3px 10px rgba(0,0,0,.12);
+  }
+  .page::before{
+    content:"";
+    position:absolute;
+    top:6px;left:6px;right:6px;bottom:6px;
+    border:1px solid var(--gold);
+    border-radius:3px;
+    pointer-events:none;
+  }
+  .letterhead{
+    text-align:center;
+    margin-bottom:6px;
+  }
+  .letterhead .line1{
+    font-size:18px;font-weight:700;color:var(--navy);
+  }
+  .letterhead .line2{
+    font-size:14px;font-weight:600;color:var(--navy2);margin-top:2px;
+  }
+  .letterhead .line3{
+    font-size:13px;font-weight:600;color:var(--navy2);margin-top:1px;
+  }
+  .title-bar{
+    background:var(--navy);
+    color:#fff;
+    text-align:center;
+    font-size:14.5px;
+    font-weight:700;
+    padding:8px 10px;
+    border-radius:4px;
+    margin:12px 0 10px 0;
+    letter-spacing:.3px;
+  }
+  .meta-line{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 22px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--navy);
+    border-top:1px dashed var(--gold);
+    border-bottom:1px dashed var(--gold);
+    padding:7px 4px;
+    margin-bottom:10px;
+  }
+  .meta-line .fld{display:inline-flex;align-items:center;gap:5px;}
+  .meta-line .fld span.lbl{white-space:nowrap;}
+  .meta-line [contenteditable]{
+    min-width:110px;
+    border-bottom:1px solid #888;
+    padding:1px 4px;
+    outline:none;
+  }
+  .meta-line [contenteditable]:focus{background:var(--gold-light);}
+  .para{
+    font-size:12.5px;
+    line-height:1.75;
+    text-align:justify;
+    color:#1a1a1a;
+    padding:6px 2px 4px 2px;
+    outline:none;
+    border-radius:3px;
+  }
+  .para:focus{background:#fbf7e8;}
+  .para + .para{margin-top:6px;}
+
+  table.crew{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+    font-size:12px;
+  }
+  table.crew th, table.crew td{
+    border:1px solid var(--navy);
+    padding:12px 8px;
+    text-align:center;
+    vertical-align:middle;
+  }
+  table.crew th{
+    background:var(--navy);
+    color:#fff;
+    font-weight:700;
+    font-size:12px;
+  }
+  table.crew td.name, table.crew td.hq{text-align:left;}
+  table.crew td[contenteditable]{
+    outline:none;
+    min-height:26px;
+  }
+  table.crew td[contenteditable]:focus{background:var(--gold-light);}
+  table.crew td.name, table.crew td.cms{position:relative;}
+  table.crew input.ac-input{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-family:inherit;
+    font-size:12px;
+    padding:2px;
+    outline:none;
+  }
+  table.crew input.ac-input:focus{background:var(--gold-light);}
+  .ac-list{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    min-width:220px;
+    max-height:220px;
+    overflow-y:auto;
+    background:#fff;
+    border:1px solid var(--navy);
+    border-radius:4px;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
+    z-index:50;
+    text-align:left;
+  }
+  .ac-list.open{display:block;}
+  .ac-item{
+    padding:6px 8px;
+    font-size:12px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+    white-space:nowrap;
+  }
+  .ac-item .ac-sub{color:#666;font-size:10.5px;}
+  .ac-item:last-child{border-bottom:none;}
+  .ac-item:hover, .ac-item.active{background:var(--gold-light);}
+  .ac-empty{padding:6px 8px;font-size:11.5px;color:#888;}
+  table.crew td.cms{font-weight:600;}
+  table.crew tr:nth-child(even) td{background:#f7f8fb;}
+  table.crew tr:nth-child(even) td[contenteditable]:focus{background:var(--gold-light);}
+
+  .col-sn{width:32px;}
+  .col-name{width:22%;}
+  .col-desig{width:14%;}
+  .col-hq{width:13%;}
+  .col-cms{width:13%;}
+  .col-last{width:16%;}
+
+  .row-tools{
+    text-align:right;
+    margin-top:8px;
+  }
+
+  .footer-note{
+    font-size:10.5px;
+    color:#666;
+    margin-top:10px;
+    text-align:right;
+  }
+
+  .sign-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:26px;
+    padding-top:10px;
+    border-top:1px dashed var(--gold);
+  }
+  .sign-block{
+    font-size:12px;
+    line-height:1.55;
+    color:#1a1a1a;
+  }
+  .sign-block .sig-line{
+    min-height:30px;
+    border-bottom:1px solid #444;
+    width:230px;
+    margin-bottom:4px;
+    outline:none;
+    padding:0 2px;
+  }
+  .sign-block .sig-line:focus{background:var(--gold-light);}
+  .sign-block .sig-name{
+    font-weight:700;
+    outline:none;
+  }
+  .sign-block .sig-name:focus{background:var(--gold-light);}
+  .sign-block .sig-desig{
+    outline:none;
+  }
+  .sign-block .sig-desig:focus{background:var(--gold-light);}
+  .sign-block .sig-caption{
+    font-size:11px;
+    color:#444;
+    margin-top:2px;
+  }
+  .sign-right{
+    text-align:right;
+    font-weight:600;
+  }
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .toolbar,.status,.row-tools,.no-print{display:none !important;}
+    .page{
+      box-shadow:none;
+      border:1.5px solid #000;
+      margin:0;
+      max-width:100%;
+      page-break-after:always;
+      border-radius:0;
+    }
+    .page::before{border-color:#999;}
+    .title-bar{background:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    table.crew th{background:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    table.crew tr:nth-child(even) td{background:#f2f2f2 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .ac-list{display:none !important;}
+    table.crew input.ac-input{border:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <h1>ASIG प्रपत्र — Competency Certificate · Result · Self Declaration · RS Valve Training (CMS ID सहित)</h1>
+  <div class="btns">
+    <button class="btn-gold" id="genPdfBtn" onclick="generatePDF()">📄 Generate PDF</button>
+    <button class="btn-outline" onclick="saveDraft()">💾 Save Draft</button>
+    <button class="btn-outline" onclick="clearDraft()">🗑️ Clear Draft</button>
+  </div>
+</div>
+<div class="status no-print" id="statusMsg">&nbsp;</div>
+
+<!-- ===================== PAGE 1: Competency Certificate ===================== -->
+<div class="page" id="page1">
+  <div class="letterhead">
+    <div class="line1">दक्षिण पूर्व मध्य रेलवे</div>
+    <div class="line2">विद्युत् परिचालन विभाग, रायपुर मंडल</div>
+  </div>
+  <div class="title-bar">Automatic Signalling System Competency Certificate</div>
+  <div class="meta-line">
+    <span class="fld"><span class="lbl">क्रमांक-</span><span contenteditable="true">ASIG/CoE/BIA/R/SECR/140726</span></span>
+    <span class="fld"><span class="lbl">दिनांक-</span><span class="sync-date" contenteditable="true">14.07.2026</span></span>
+  </div>
+  <div class="para" contenteditable="true">प्रमाणित किया जाता है कि आज निम्न रनिंग स्टाफ के द्वारा एक दिवसीय ऑटोमेटिक सिग्नलिंग प्रणाली की दक्षता का प्रशिक्षण सफलतापूर्वक प्राप्त किया गया। प्रशिक्षण के अंत में आयोजित परीक्षण– ASIG/Competency/Exam/CoE/BIA/R/SECR/140726 में उपस्थित हुए। परीक्षण के प्राप्तांक और प्रशिक्षणार्थी के स्वयं के घोषणा पत्र -ASIG/Selfdeclaration/.............. के आधार पर निम्न रनिंग स्टाफ ऑटोमेटिक सिग्नलिंग प्रणाली में कार्य करने हेतु यह दक्षता प्रमाणपत्र प्रदान किया जाता है। जिसकी वैधता छः माह की रहेगी।</div>
+
+  <table class="crew" id="table1">
+    <thead>
+      <tr>
+        <th class="col-sn">क्र.</th>
+        <th class="col-name">नाम</th>
+        <th class="col-desig">पदनाम</th>
+        <th class="col-hq">मुख्यालय</th>
+        <th class="col-cms">CMS ID</th>
+        <th class="col-last">हस्ताक्षर</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="row-tools no-print">
+    <button class="btn-outline btn-small" style="color:var(--navy);border-color:var(--navy);" onclick="addRow('table1')">+ Add Row</button>
+  </div>
+  <div class="sign-footer">
+    <div class="sign-block">
+      <div class="sig-line" contenteditable="true"></div>
+      <div class="sig-name sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</div>
+      <div class="sig-desig sync-cli-desig" contenteditable="true">म.लो.नि/भिलाई</div>
+      <div class="sig-caption">लोको निरीक्षक का नाम व हस्ताक्षर</div>
+    </div>
+    <div class="sign-block sign-right">
+      <div contenteditable="true">सहा.मंडल</div>
+      <div contenteditable="true">विद्युत् अभियंता (परि.)</div>
+      <div contenteditable="true">भिलाई/द.पू.म.रेलवे</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 2: Competency Result ===================== -->
+<div class="page" id="page2">
+  <div class="title-bar">Automatic Signalling System Competency Result</div>
+  <div class="meta-line" style="display:block;">
+    <span class="fld"><span class="lbl">परीक्षण क्रमांक-</span><span contenteditable="true">ASIG/Competency Exam/CoE/BIA/R/SECR/140726</span></span>
+    &nbsp;&nbsp;
+    <span class="fld"><span class="lbl">प्रशिक्षण क्रमांक-</span><span contenteditable="true">ASIG/CoE/BIA/R/SECR/140726</span></span>
+    &nbsp;&nbsp;
+    <span class="fld"><span class="lbl">दिनांक-</span><span class="sync-date" contenteditable="true">14.07.2026</span></span>
+  </div>
+  <div class="para" style="font-weight:700;text-align:left;">लोको निरीक्षक- <span class="sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</span></div>
+
+  <table class="crew" id="table2">
+    <thead>
+      <tr>
+        <th class="col-sn">क्र.</th>
+        <th class="col-name">नाम</th>
+        <th class="col-desig">पदनाम</th>
+        <th class="col-hq">मुख्यालय</th>
+        <th class="col-cms">CMS ID</th>
+        <th class="col-last">प्राप्तांक<br>(पूर्णांक 25)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="row-tools no-print">
+    <button class="btn-outline btn-small" style="color:var(--navy);border-color:var(--navy);" onclick="addRow('table2')">+ Add Row</button>
+  </div>
+  <div class="sign-footer">
+    <div class="sign-block">
+      <div class="sig-line" contenteditable="true"></div>
+      <div class="sig-name sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</div>
+      <div class="sig-desig sync-cli-desig" contenteditable="true">म.लो.नि/भिलाई</div>
+      <div class="sig-caption">लोको निरीक्षक का नाम व हस्ताक्षर</div>
+    </div>
+    <div class="sign-block sign-right">
+      <div contenteditable="true">सहा.मंडल</div>
+      <div contenteditable="true">विद्युत् अभियंता (परि.)</div>
+      <div contenteditable="true">भिलाई/द.पू.म.रेलवे</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 3: Self Declaration ===================== -->
+<div class="page" id="page3">
+  <div class="title-bar" contenteditable="true">घोषणा पत्र - ASIG/Selfdeclaration/140726</div>
+  <div class="letterhead" style="margin-bottom:8px;">
+    <div class="line2" style="font-size:13.5px;">Automatic Signalling System - Declaration</div>
+  </div>
+  <div class="meta-line">
+    <span class="fld"><span class="lbl">बैचक्रमांक-</span><span contenteditable="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span class="fld"><span class="lbl">दिनांक-</span><span class="sync-date" contenteditable="true">14.07.2026</span></span>
+  </div>
+  <div class="para" style="font-weight:700;">लोको निरीक्षक- <span class="sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</span></div>
+  <div class="para" contenteditable="true">मैं अधोहस्ताक्षरकर्ता घोषणा करता हूँ कि आज को एक दिवसीय ऑटोमेटिक सिग्नलिंग प्रणाली की दक्षता का प्रशिक्षण सफलतापूर्वक प्राप्त किया। प्रशिक्षण के अंत में आयोजित परीक्षण:- ASIG/Competency Exam/CoE/BIA/R/SECR/................ में उपस्थित हुआ। प्रशिक्षण में लोको निरीक्षक महोदय द्वारा ऑटोमेटिक सिग्नलिंग प्रणाली के सम्बन्ध में समस्त जानकारी प्रदान की तथा मेरे कार्य क्षेत्र में मिलने वाले सभी सिग्नलों की जानकारी भी प्रदान की। अतः मैं घोषणा करता हूँ कि ऑटोमेटिक सिग्नलिंग प्रणाली में कार्य करने हेतु सक्षम हूँ।</div>
+
+  <table class="crew" id="table3">
+    <thead>
+      <tr>
+        <th class="col-sn">क्र.</th>
+        <th class="col-name">नाम</th>
+        <th class="col-desig">पदनाम</th>
+        <th class="col-hq">मुख्यालय</th>
+        <th class="col-cms">CMS ID</th>
+        <th class="col-last">हस्ताक्षर</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="row-tools no-print">
+    <button class="btn-outline btn-small" style="color:var(--navy);border-color:var(--navy);" onclick="addRow('table3')">+ Add Row</button>
+  </div>
+  <div class="sign-footer">
+    <div class="sign-block">
+      <div class="sig-line" contenteditable="true"></div>
+      <div class="sig-name sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</div>
+      <div class="sig-desig sync-cli-desig" contenteditable="true">म.लो.नि/भिलाई</div>
+      <div class="sig-caption">लोको निरीक्षक का नाम व हस्ताक्षर</div>
+    </div>
+    <div class="sign-block sign-right">
+      <div contenteditable="true">सहा.मंडल</div>
+      <div contenteditable="true">विद्युत् अभियंता (परि.)</div>
+      <div contenteditable="true">भिलाई/द.पू.म.रेलवे</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE 4: RS Valve Training ===================== -->
+<div class="page" id="page4">
+  <div class="letterhead">
+    <div class="line1">दक्षिण पूर्व मध्य रेलवे</div>
+    <div class="line2">उत्कृष्टता केंद्र, बीएमवाई</div>
+    <div class="line3">विद्युत् परिचालन विभाग, रायपुर मंडल</div>
+  </div>
+  <div class="title-bar">RS वाल्व वर्किंग मॉडल प्रशिक्षण / अभ्यास - स्वीकृति व सक्षमता प्रमाण-पत्र</div>
+  <div class="meta-line">
+    <span class="fld"><span class="lbl">बैचक्रमांक-</span><span contenteditable="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span class="fld"><span class="lbl">दिनांक-</span><span class="sync-date" contenteditable="true">14.07.2026</span></span>
+  </div>
+  <div class="para" style="font-weight:700;">लोको निरीक्षक- <span class="sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</span></div>
+  <div class="para" contenteditable="true">हम अधोहस्ताक्षरकर्ता स्वीकृति प्रदान करते हैं कि उत्कृष्टता केंद्र, बीएमवाई में आज RS वाल्व वर्किंग मॉडल प्रशिक्षण / अभ्यास प्राप्त किया है, जिसे हम उपयोग करने में सक्षम हैं और भविष्य में इसकी आवश्यकता पड़ने पर उपयोग कर सकते हैं। इस प्रशिक्षण / अभ्यास से हम संतुष्ट हैं।</div>
+  <div class="para" contenteditable="true">RS वाल्व वर्किंग मॉडल प्रशिक्षण / अभ्यास उपरोक्त रनिंग स्टाफ को प्रदान किया गया।</div>
+
+  <table class="crew" id="table4">
+    <thead>
+      <tr>
+        <th class="col-sn">क्र.</th>
+        <th class="col-name">नाम</th>
+        <th class="col-desig">पदनाम</th>
+        <th class="col-hq">मुख्यालय</th>
+        <th class="col-cms">CMS ID</th>
+        <th class="col-last">हस्ताक्षर</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="row-tools no-print">
+    <button class="btn-outline btn-small" style="color:var(--navy);border-color:var(--navy);" onclick="addRow('table4')">+ Add Row</button>
+  </div>
+  <div class="sign-footer">
+    <div class="sign-block">
+      <div class="sig-line" contenteditable="true"></div>
+      <div class="sig-name sync-cli-name" contenteditable="true">संतोष कुमार पाटकार</div>
+      <div class="sig-desig sync-cli-desig" contenteditable="true">म.लो.नि/भिलाई</div>
+      <div class="sig-caption">लोको निरीक्षक का नाम व हस्ताक्षर</div>
+    </div>
+    <div class="sign-block sign-right">
+      <div contenteditable="true">सहा.मंडल</div>
+      <div contenteditable="true">विद्युत् अभियंता (परि.)</div>
+      <div contenteditable="true">भिलाई/द.पू.म.रेलवे</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DRAFT_KEY = 'asig_4page_forms_draft_v1';
+
+  // ===== Crew master list: नाम चुनते ही पदनाम/मुख्यालय/CMS ID अपने आप भर जाएगा =====
+  const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwaKiKWtHhTdd6swWoDqEAA7CSHHpS0cFX8m9AJLZ1wxlGzb4fASvRMSv7LgJpiyqGM/exec";
+
+  let crewData = [];
+  const FALLBACK_crewData = [
+  {
+    "name": "SANJEEV TIWARI",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC3007"
+  },
+  {
+    "name": "RADHELAL",
+    "desig": "ALP",
+    "hq": "BYT",
+    "cms": "BYT1178"
+  },
+  {
+    "name": "PRAVEEN KUMAR DALAI",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1743"
+  },
+  {
+    "name": "SHASHANK KUMAR",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1554"
+  },
+  {
+    "name": "AJIT KUMAR",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC3011"
+  },
+  {
+    "name": "MITHILESH KR GUPTA",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2960"
+  },
+  {
+    "name": "ANGAD",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2963"
+  },
+  {
+    "name": "TRILOKI NATH",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC3032"
+  },
+  {
+    "name": "M VIJAY KUMAR",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1193"
+  },
+  {
+    "name": "SANDEEP SHRIWAS",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2997"
+  },
+  {
+    "name": "VIKASH GAUTAM",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1231"
+  },
+  {
+    "name": "RITESH KUNDEY",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1397"
+  },
+  {
+    "name": "RUPESH KR MISHRA",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1125"
+  },
+  {
+    "name": "SUNNY KUMAR",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1565"
+  },
+  {
+    "name": "UMESH KUMAR DSL",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2182"
+  },
+  {
+    "name": "ASHISH SINHA",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1593"
+  },
+  {
+    "name": "AJAY KUMAR G",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1589"
+  },
+  {
+    "name": "MANOJ BAND",
+    "desig": "ALP",
+    "hq": "DURG",
+    "cms": "DURG1267"
+  },
+  {
+    "name": "MURALI DHAR SINHA",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1580"
+  },
+  {
+    "name": "S SATISH KUMAR ELEC",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1192"
+  },
+  {
+    "name": "ABHISHEK SARKAR ELEC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2087"
+  },
+  {
+    "name": "SUDHIR VITHALKAR ELEC",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1197"
+  },
+  {
+    "name": "K VENKAT RAO 12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2106"
+  },
+  {
+    "name": "K TRIMLESHAN ELEC12H HC KC OC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2089"
+  },
+  {
+    "name": "RAVINDRA PRASAD 12 RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2095"
+  },
+  {
+    "name": "Y K BANKURE 12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2096"
+  },
+  {
+    "name": "C. S. THAKUR ELEC KC 12H",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2090"
+  },
+  {
+    "name": "MD AZIZ AHMAD 12 RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2099"
+  },
+  {
+    "name": "K. K. CHAKRAVORTY ELEC",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2097"
+  },
+  {
+    "name": "ARJUN BEHRA RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2103"
+  },
+  {
+    "name": "A K PRASAD ELEC 12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2080"
+  },
+  {
+    "name": "LALIT KUMAR HEDAU ELEC 12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2083"
+  },
+  {
+    "name": "SIPIN KISHORE ELEC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2069"
+  },
+  {
+    "name": "P PRASAD RAO 12 RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2085"
+  },
+  {
+    "name": "D. K. SATWARTI ELEC HC KC 12H",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2079"
+  },
+  {
+    "name": "RAJU PRAJAPATI 12 RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2065"
+  },
+  {
+    "name": "S. KR DHAKRE ELEC KC HC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2055"
+  },
+  {
+    "name": "SHUSHIL KUMAR",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1733"
+  },
+  {
+    "name": "RAKESH KR PANDEY II ELEC 12",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2064"
+  },
+  {
+    "name": "ANKUR WASNIK G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1482"
+  },
+  {
+    "name": "RAJENDER SINGH ELEC KCHC12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2068"
+  },
+  {
+    "name": "M. K. GAJENDRA ELEC 12",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2075"
+  },
+  {
+    "name": "O P PARASHAR 12 RIG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2088"
+  },
+  {
+    "name": "LALIT KUMAR DIVY ELEC HCKC12H",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2072"
+  },
+  {
+    "name": "Y. PRITAM ELEC HC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2074"
+  },
+  {
+    "name": "SUNIL KU GAJBHIYE ELEC HC 12",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2082"
+  },
+  {
+    "name": "K. K. MESHRAM ELEC HC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2081"
+  },
+  {
+    "name": "PITAMBER PANDEY",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1193"
+  },
+  {
+    "name": "TORAN LAL SAHU G12",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1126"
+  },
+  {
+    "name": "MAHESH KUMAR DSL VC G6 ELEC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2210"
+  },
+  {
+    "name": "UMASHANKAR SAHU DUEL",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1110"
+  },
+  {
+    "name": "MUKESH KUMAR SAHU DSL",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1109"
+  },
+  {
+    "name": "YOGESH DESHMUKH DUEL",
+    "desig": "ALP",
+    "hq": "DRZ",
+    "cms": "DRZ1108"
+  },
+  {
+    "name": "B L GAUTAM VC G6 DSL ELEC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2052"
+  },
+  {
+    "name": "ARUN KUMAR DUEL",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1116"
+  },
+  {
+    "name": "UTTAM KUMAR DUEL",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1115"
+  },
+  {
+    "name": "KAMAL SURJAL ELEC",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2313"
+  },
+  {
+    "name": "JAI PRAKASH SAHU",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1417"
+  },
+  {
+    "name": "KAILASH KUMAR III DSL",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2947"
+  },
+  {
+    "name": "RAMCHAND SAHU",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1237"
+  },
+  {
+    "name": "PRAMOD KR KAUSHIK",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1151"
+  },
+  {
+    "name": "RAJEEV KUMAR 1",
+    "desig": "LPG",
+    "hq": "BYT",
+    "cms": "BYT1096"
+  },
+  {
+    "name": "SATISH KR DSL",
+    "desig": "LPG",
+    "hq": "R",
+    "cms": "R1164"
+  },
+  {
+    "name": "BHIGESH KUMAR",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2882"
+  },
+  {
+    "name": "SUNIL KUMAR LPG",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2883"
+  },
+  {
+    "name": "D K DEVDAS DSL G6",
+    "desig": "LPG",
+    "hq": "BYT",
+    "cms": "BYT1172"
+  },
+  {
+    "name": "S.KUMAR G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1596"
+  },
+  {
+    "name": "DEEPAK KUMAR",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1111"
+  },
+  {
+    "name": "RUPESH KUMAR SAHUVC",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2607"
+  },
+  {
+    "name": "R K CHANDANIYA",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1149"
+  },
+  {
+    "name": "RIDHESH KUMAR",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2609"
+  },
+  {
+    "name": "VAIBHAV DONGRE G6",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1588"
+  },
+  {
+    "name": "OM PRATAP SINGH",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1634"
+  },
+  {
+    "name": "RAHUL VERMA DUAL G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1591"
+  },
+  {
+    "name": "BIPIN KUMAR DUAL",
+    "desig": "LPG",
+    "hq": "BYT",
+    "cms": "BYT1040"
+  },
+  {
+    "name": "SUNIL KUMAR DUEL",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1161"
+  },
+  {
+    "name": "VIKAS PURI GOSWAMI G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1610"
+  },
+  {
+    "name": "MD LATIF KHAN DSL G4 G6",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1257"
+  },
+  {
+    "name": "MD MURTUZA NAWAZ NEW25 DSLG46",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2595"
+  },
+  {
+    "name": "ANURAG VAIDYA ELECVC G6",
+    "desig": "ALP",
+    "hq": "DURG",
+    "cms": "DURG1412"
+  },
+  {
+    "name": "SANJAY KUMAR MRJ",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1478"
+  },
+  {
+    "name": "AJAY KUMAR NEW25 DSL G4 G6",
+    "desig": "LPG",
+    "hq": "DBEC",
+    "cms": "DBEC2173"
+  },
+  {
+    "name": "DHEERAJ KUMAR SAHU",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1579"
+  },
+  {
+    "name": "FANISH KUMAR G6",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1473"
+  },
+  {
+    "name": "CHANDRA PRAKASH VC G6 DSL EL",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2596"
+  },
+  {
+    "name": "NAVIN KUMAR VERMA DUE G4 G6",
+    "desig": "LPG",
+    "hq": "DRZ",
+    "cms": "DRZ1173"
+  },
+  {
+    "name": "DHEERAJ KUMAR SINHA G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1594"
+  },
+  {
+    "name": "RAJENDRA PRASAD SAHU G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1576"
+  },
+  {
+    "name": "NAMITA G12",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC3029"
+  },
+  {
+    "name": "D K PARGANIHA",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2870"
+  },
+  {
+    "name": "SHUBHAM DEWANGAN G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1599"
+  },
+  {
+    "name": "RANVIR NATH MEHTA 12 PND",
+    "desig": "LPG",
+    "hq": "BYT",
+    "cms": "BYT1457"
+  },
+  {
+    "name": "VIVEK KUMAR G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1592"
+  },
+  {
+    "name": "ROHIT KUMAR PATEL",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1468"
+  },
+  {
+    "name": "NAVEEN KUMAR G12 PND",
+    "desig": "LPG",
+    "hq": "BYT",
+    "cms": "BYT1456"
+  },
+  {
+    "name": "SHAILENDRA PATEL G12",
+    "desig": "ALP",
+    "hq": "R",
+    "cms": "R1598"
+  },
+  {
+    "name": "SIMHACHAL ELEC 12",
+    "desig": "ALP",
+    "hq": "DBEC",
+    "cms": "DBEC2720"
+  }
+];
+
+  async function loadCrewData(){
+    try{
+      const res = await fetch(SHEET_API_URL);
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if(!Array.isArray(data) || !data.length) throw new Error('Empty or invalid data from sheet');
+      crewData = data;
+    }catch(err){
+      console.error('Failed to load crew data from sheet:', err);
+      crewData = FALLBACK_crewData;
+      showStatus('⚠️ Sheet से नाम लोड नहीं हुए — डिफ़ॉल्ट लिस्ट उपयोग हो रही है');
+    }
+  }
+
+
+  // ===== Autocomplete: works both for "नाम" box (search by name) and "CMS ID" box (search by cms id) =====
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function fillRowFromCrew(tr, c){
+    tr.querySelector('.name .ac-input').value = c.name;
+    tr.querySelector('.desig').innerHTML = c.desig;
+    tr.querySelector('.hq').innerHTML = c.hq;
+    tr.querySelector('.cms .ac-input').value = c.cms;
+    propagateIfMaster(tr);
+    autoSave();
+  }
+
+  // ===== Page-1 table is the "master": whatever is typed/selected there is
+  // automatically copied into the same row of tables 2, 3 and 4 =====
+  function propagateIfMaster(tr){
+    const table = tr.closest('table');
+    if(!table || table.id !== 'table1') return;
+    const rowIndex = Array.from(tr.parentElement.children).indexOf(tr);
+    syncRowToOtherTables(rowIndex, {
+      name: tr.querySelector('.name .ac-input').value,
+      desig: tr.querySelector('.desig').innerHTML,
+      hq: tr.querySelector('.hq').innerHTML,
+      cms: tr.querySelector('.cms .ac-input').value
+    });
+  }
+
+  function syncRowToOtherTables(rowIndex, data){
+    ['table2','table3','table4'].forEach(destId => {
+      const destTbody = document.querySelector('#' + destId + ' tbody');
+      let destRow = destTbody.children[rowIndex];
+      if(!destRow){
+        destRow = buildRow(destId, rowIndex + 1);
+        destTbody.appendChild(destRow);
+      }
+      const nameInput = destRow.querySelector('.name .ac-input');
+      const cmsInput = destRow.querySelector('.cms .ac-input');
+      if(nameInput) nameInput.value = data.name || '';
+      if(cmsInput) cmsInput.value = data.cms || '';
+      destRow.querySelector('.desig').innerHTML = data.desig || '';
+      destRow.querySelector('.hq').innerHTML = data.hq || '';
+    });
+  }
+
+  function attachMasterRowSync(tr){
+    const nameInput = tr.querySelector('.name .ac-input');
+    const cmsInput = tr.querySelector('.cms .ac-input');
+    const desigTd = tr.querySelector('.desig');
+    const hqTd = tr.querySelector('.hq');
+    [nameInput, cmsInput].forEach(el => el.addEventListener('input', () => propagateIfMaster(tr)));
+    [desigTd, hqTd].forEach(el => el.addEventListener('input', () => propagateIfMaster(tr)));
+  }
+
+  function setupDateSync(){
+    setupSyncGroup('.sync-date');
+    setupSyncGroup('.sync-cli-name');
+    setupSyncGroup('.sync-cli-desig');
+  }
+
+  function setupSyncGroup(selector){
+    const els = document.querySelectorAll(selector);
+    els.forEach(el => {
+      el.addEventListener('input', () => {
+        const val = el.innerHTML;
+        els.forEach(other => { if(other !== el) other.innerHTML = val; });
+      });
+    });
+  }
+
+  function clearMatchedFields(tr){
+    tr.querySelector('.desig').innerHTML = '';
+    tr.querySelector('.hq').innerHTML = '';
+  }
+
+  function closeAcList(list){
+    list.classList.remove('open');
+    list.innerHTML = '';
+  }
+
+  function openAcList(input, list, matches){
+    if(!matches.length){
+      list.innerHTML = '<div class="ac-empty">कोई मैच नहीं मिला</div>';
+      list.classList.add('open');
+      return;
+    }
+    list.innerHTML = matches.slice(0, 15).map((c, i) => `
+      <div class="ac-item" data-idx="${c.__idx}">
+        ${escapeHtml(c.name)}
+        <div class="ac-sub">${escapeHtml(c.desig)} · ${escapeHtml(c.hq)} · ${escapeHtml(c.cms)}</div>
+      </div>
+    `).join('');
+    list.classList.add('open');
+  }
+
+  function handleAutocomplete(input, type){
+    const tr = input.closest('tr');
+    const list = input.parentElement.querySelector('.ac-list');
+    const q = input.value.trim().toLowerCase();
+    if(!q){
+      closeAcList(list);
+      return;
+    }
+    const field = type === 'name' ? 'name' : 'cms';
+    const matches = crewData
+      .map((c, i) => ({...c, __idx:i}))
+      .filter(c => String(c[field]).toLowerCase().includes(q));
+    openAcList(input, list, matches);
+  }
+
+  function attachAcListClickHandler(list, tr){
+    list.addEventListener('click', (e) => {
+      const item = e.target.closest('.ac-item');
+      if(!item) return;
+      const idx = parseInt(item.getAttribute('data-idx'), 10);
+      const c = crewData[idx];
+      if(c){
+        fillRowFromCrew(tr, c);
+      }
+      closeAcList(list);
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('td.name') && !e.target.closest('td.cms')){
+      document.querySelectorAll('.ac-list.open').forEach(closeAcList);
+    }
+  });
+
+  const tableConfig = {
+    table1: { rows: 10 },
+    table2: { rows: 10 },
+    table3: { rows: 10 },
+    table4: { rows: 10 }
+  };
+
+  function buildRow(tableId, sn){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="sn">${sn}</td>
+      <td class="name">
+        <input type="text" class="ac-input name-input" placeholder="नाम टाइप करें..." autocomplete="off" oninput="handleAutocomplete(this,'name')" onfocus="handleAutocomplete(this,'name')">
+        <div class="ac-list no-print"></div>
+      </td>
+      <td class="desig" contenteditable="true"></td>
+      <td class="hq" contenteditable="true"></td>
+      <td class="cms">
+        <input type="text" class="ac-input cms-input" placeholder="CMS ID टाइप करें..." autocomplete="off" oninput="handleAutocomplete(this,'cms')" onfocus="handleAutocomplete(this,'cms')">
+        <div class="ac-list no-print"></div>
+      </td>
+      <td class="last" contenteditable="true"></td>
+    `;
+    tr.querySelectorAll('.ac-list').forEach(list => attachAcListClickHandler(list, tr));
+    if(tableId === 'table1'){
+      attachMasterRowSync(tr);
+    }
+    return tr;
+  }
+
+  function initTables(){
+    Object.keys(tableConfig).forEach(id => {
+      const tbody = document.querySelector('#' + id + ' tbody');
+      const n = tableConfig[id].rows;
+      for(let i=1;i<=n;i++){
+        tbody.appendChild(buildRow(id, i));
+      }
+    });
+  }
+
+  function addRow(tableId){
+    const tbody = document.querySelector('#' + tableId + ' tbody');
+    const sn = tbody.children.length + 1;
+    tbody.appendChild(buildRow(tableId, sn));
+    if(tableId === 'table1'){
+      ['table2','table3','table4'].forEach(id => {
+        const tb = document.querySelector('#' + id + ' tbody');
+        if(tb.children.length < tbody.children.length){
+          tb.appendChild(buildRow(id, tb.children.length + 1));
+        }
+      });
+    }
+  }
+
+  function serializeForm(){
+    const data = { meta: {}, tables: {} };
+    document.querySelectorAll('[contenteditable]').forEach((el, idx) => {
+      if(!el.id){ el.setAttribute('data-idx', idx); }
+    });
+    document.querySelectorAll('.page').forEach(page => {
+      const editables = page.querySelectorAll('.meta-line [contenteditable], .para, .title-bar[contenteditable], .sign-footer [contenteditable]');
+      const vals = [];
+      editables.forEach(el => vals.push(el.innerHTML));
+      data.meta[page.id] = vals;
+    });
+    Object.keys(tableConfig).forEach(id => {
+      const rows = [];
+      document.querySelectorAll('#' + id + ' tbody tr').forEach(tr => {
+        rows.push({
+          name: tr.querySelector('.name .ac-input').value,
+          desig: tr.querySelector('.desig').innerHTML,
+          hq: tr.querySelector('.hq').innerHTML,
+          cms: tr.querySelector('.cms .ac-input').value,
+          last: tr.querySelector('.last').innerHTML
+        });
+      });
+      data.tables[id] = rows;
+    });
+    return data;
+  }
+
+  function saveDraft(){
+    try{
+      const data = serializeForm();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+      showStatus('ड्राफ्ट सेव हो गया ✅');
+    }catch(e){
+      showStatus('सेव करने में त्रुटि ❌');
+    }
+  }
+
+  function loadDraft(){
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return;
+    try{
+      const data = JSON.parse(raw);
+      document.querySelectorAll('.page').forEach(page => {
+        const editables = page.querySelectorAll('.meta-line [contenteditable], .para, .title-bar[contenteditable], .sign-footer [contenteditable]');
+        const vals = data.meta[page.id] || [];
+        editables.forEach((el, i) => { if(vals[i] !== undefined) el.innerHTML = vals[i]; });
+      });
+      Object.keys(tableConfig).forEach(id => {
+        const rows = data.tables[id] || [];
+        const trs = document.querySelectorAll('#' + id + ' tbody tr');
+        rows.forEach((r, i) => {
+          if(trs[i]){
+            const nameInput = trs[i].querySelector('.name .ac-input');
+            const cmsInput = trs[i].querySelector('.cms .ac-input');
+            if(nameInput) nameInput.value = r.name || '';
+            if(cmsInput) cmsInput.value = r.cms || '';
+            trs[i].querySelector('.desig').innerHTML = r.desig || '';
+            trs[i].querySelector('.hq').innerHTML = r.hq || '';
+            trs[i].querySelector('.last').innerHTML = r.last || '';
+          }
+        });
+      });
+      showStatus('पिछला ड्राफ्ट लोड किया गया 🔄');
+    }catch(e){}
+  }
+
+  function clearDraft(){
+    if(!confirm('क्या आप वाकई ड्राफ्ट डिलीट करना चाहते हैं?')) return;
+    clearTimeout(autoSaveTimer);
+    localStorage.removeItem(DRAFT_KEY);
+    document.querySelectorAll('table.crew tbody').forEach(tb => tb.innerHTML = '');
+    initTables();
+    document.querySelectorAll('.para, .meta-line [contenteditable]').forEach(el => {
+      // leave defaults as-is on clear of rows only
+    });
+    showStatus('ड्राफ्ट क्लियर हो गया 🗑️');
+  }
+
+  function showStatus(msg){
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    setTimeout(() => { el.textContent = '\u00A0'; }, 2500);
+  }
+
+  // ===== Auto Save: har change (typing, select, autocomplete pick) khud-ba-khud
+  // save ho jaata hai. Form dobara khulne par sab kuch apne aap bhar jaayega,
+  // jab tak "Clear Draft" na dabayen. =====
+  let autoSaveTimer = null;
+  function autoSave(){
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(() => {
+      try{
+        const data = serializeForm();
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+        showStatus('ऑटो-सेव हो गया 💾');
+      }catch(e){}
+    }, 600);
+  }
+
+  function setupAutoSave(){
+    // Typing in any contenteditable field or text input (name / CMS boxes) auto-saves
+    document.addEventListener('input', (e) => {
+      if(e.target.closest('.page')){
+        autoSave();
+      }
+    });
+  }
+
+  // ===== Generate PDF (15 rows per page) =====
+  const PDF_ROWS_PER_PAGE = 15;
+
+  function chunkRows(rows, size){
+    const chunks = [];
+    for(let i=0;i<rows.length;i+=size){
+      chunks.push(rows.slice(i, i+size));
+    }
+    if(chunks.length === 0) chunks.push([]);
+    return chunks;
+  }
+
+  function prepareCloneForCapture(clone){
+    // Hide anything marked no-print (add row buttons, autocomplete lists etc.)
+    clone.querySelectorAll('.no-print').forEach(el => { el.style.display = 'none'; });
+    // Replace live autocomplete <input> fields with plain text so they render reliably
+    clone.querySelectorAll('input.ac-input').forEach(inp => {
+      const span = document.createElement('span');
+      span.textContent = inp.value || '';
+      span.style.display = 'inline-block';
+      span.style.width = '100%';
+      span.style.fontFamily = 'inherit';
+      span.style.fontSize = 'inherit';
+      span.style.padding = '2px';
+      if(inp.parentNode) inp.parentNode.replaceChild(span, inp);
+    });
+  }
+
+  async function generatePDF(){
+    const btn = document.getElementById('genPdfBtn');
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ PDF बन रहा है...';
+    showStatus('PDF तैयार किया जा रहा है, कृपया प्रतीक्षा करें...');
+
+    const tempWrappers = [];
+    try{
+      if(typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined'){
+        throw new Error('PDF लाइब्रेरी लोड नहीं हो पाई। इंटरनेट कनेक्शन जाँचें।');
+      }
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p','mm','a4');
+      const pageIds = ['page1','page2','page3','page4'];
+      let firstImage = true;
+
+      for(const pageId of pageIds){
+        const originalPage = document.getElementById(pageId);
+        if(!originalPage) continue;
+        const tbody = originalPage.querySelector('table.crew tbody');
+        const rows = tbody ? Array.from(tbody.children) : [];
+        const chunks = chunkRows(rows, PDF_ROWS_PER_PAGE);
+
+        for(let ci=0; ci<chunks.length; ci++){
+          const clone = originalPage.cloneNode(true);
+          clone.removeAttribute('id');
+          clone.style.margin = '0';
+          clone.style.boxShadow = 'none';
+
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'absolute';
+          wrapper.style.left = '-99999px';
+          wrapper.style.top = '0';
+          wrapper.style.width = '900px';
+          wrapper.appendChild(clone);
+          document.body.appendChild(wrapper);
+          tempWrappers.push(wrapper);
+
+          // Keep only this chunk's rows in the cloned table
+          const cloneTbody = clone.querySelector('table.crew tbody');
+          if(cloneTbody){
+            const cloneRows = Array.from(cloneTbody.children);
+            const startIdx = ci * PDF_ROWS_PER_PAGE;
+            cloneRows.forEach((r, idx) => {
+              if(idx < startIdx || idx >= startIdx + PDF_ROWS_PER_PAGE){
+                r.remove();
+              }
+            });
+          }
+
+          const isFirstChunk = ci === 0;
+
+          if(!isFirstChunk){
+            clone.querySelectorAll(':scope > .letterhead, :scope > .meta-line, :scope > .para').forEach(el => {
+              el.style.display = 'none';
+            });
+            const titleBar = clone.querySelector(':scope > .title-bar');
+            if(titleBar) titleBar.textContent = titleBar.textContent + ' (जारी - पृष्ठ ' + (ci+1) + ')';
+          }
+          // Signature label (name/designation of Loco Inspector + right-side block)
+          // stays visible on EVERY generated page, including continuation pages.
+
+          prepareCloneForCapture(clone);
+
+          // let layout settle
+          await new Promise(res => setTimeout(res, 30));
+
+          const canvas = await html2canvas(clone, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 6;
+          const availW = pageWidth - margin*2;
+          const availH = pageHeight - margin*2;
+          const imgRatio = canvas.height / canvas.width;
+          let renderW = availW;
+          let renderH = renderW * imgRatio;
+          if(renderH > availH){
+            renderH = availH;
+            renderW = renderH / imgRatio;
+          }
+          const x = (pageWidth - renderW) / 2;
+          const y = margin;
+
+          if(!firstImage) pdf.addPage();
+          firstImage = false;
+          pdf.addImage(imgData, 'JPEG', x, y, renderW, renderH);
+
+          wrapper.remove();
+          const wi = tempWrappers.indexOf(wrapper);
+          if(wi > -1) tempWrappers.splice(wi, 1);
+        }
+      }
+
+      const fileName = 'ASIG_Forms_' + new Date().toISOString().slice(0,10) + '.pdf';
+      pdf.save(fileName);
+      showStatus('PDF डाउनलोड हो गया ✅');
+    }catch(err){
+      console.error(err);
+      showStatus('PDF बनाने में त्रुटि ❌');
+      alert('PDF जनरेट करने में समस्या हुई। कृपया पुनः प्रयास करें।\n' + (err && err.message ? err.message : err));
+    }finally{
+      tempWrappers.forEach(w => w.remove());
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  }
+
+  async function boot(){
+    await loadCrewData();
+    initTables();
+    loadDraft();
+    setupDateSync();
+    setupAutoSave();
+  }
+  boot();
+</script>
+
+</body>
+</html>
